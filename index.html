@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pasalubong Direct - Philippine Regional Specialty Directory</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind Theme Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            terracotta: '#C85A32',
+                            terracottaDark: '#9E3E1C',
+                            wood: '#5C3D2E',
+                            cream: '#FFF9F2',
+                            sand: '#F4EAD3',
+                            leaf: '#2D5A27',
+                            gold: '#D4AF37',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        serif: ['"Playfair Display"', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #FFF9F2;
+            color: #2D231F;
+        }
+
+        /* Hover animations for product cards */
+        .product-card {
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(200, 90, 50, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+        }
+
+        .product-card-img {
+            transition: transform 0.5s ease;
+        }
+
+        .product-card:hover .product-card-img {
+            transform: scale(1.08);
+        }
+
+        .action-btn {
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .action-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Modal animation */
+        .modal-fade {
+            animation: modalFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="font-sans min-h-screen flex flex-col justify-between">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-brand-sand shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                
+                <!-- Logo -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="resetSearch()">
+                    <div class="w-10 h-10 rounded-xl bg-brand-terracotta text-white flex items-center justify-center text-xl shadow-md border-2 border-brand-gold">
+                        <i class="fa-solid fa-basket-shopping"></i>
+                    </div>
+                    <div>
+                        <span class="font-serif text-2xl font-bold tracking-tight text-brand-wood block leading-none">Pasalubong<span class="text-brand-terracotta">Direct</span></span>
+                        <span class="text-[10px] font-semibold tracking-widest text-brand-leaf uppercase block mt-1">Philippine Regional Specialties</span>
+                    </div>
+                </div>
+
+                <!-- Search Input -->
+                <div class="hidden sm:flex flex-1 max-w-md mx-8">
+                    <div class="relative w-full">
+                        <input type="text" id="searchInput" oninput="filterProducts()" placeholder="Search Vigan bibingka, Sagada coffee, Pili nuts..." class="w-full bg-brand-cream border border-brand-sand rounded-full py-2 pl-10 pr-4 text-xs focus:outline-none focus:ring-2 focus:ring-brand-terracotta transition">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-gray-400 text-xs"></i>
+                    </div>
+                </div>
+
+                <!-- Account Controls -->
+                <div id="authNavContainer" class="flex items-center space-x-2">
+                    <button onclick="openAuthModal('login')" class="text-xs font-bold text-brand-wood hover:text-brand-terracotta px-3 py-2 transition">
+                        Sign In
+                    </button>
+                    <button onclick="openAuthModal('signup')" class="bg-brand-terracotta hover:bg-brand-terracottaDark text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm">
+                        Create Account
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <!-- Hero Section -->
+        <section class="bg-brand-wood text-white py-12 px-4 border-b border-brand-sand relative overflow-hidden">
+            <div class="max-w-7xl mx-auto text-center space-y-3 relative z-10">
+                <span class="inline-block bg-brand-terracotta/30 border border-brand-terracotta/50 text-brand-sand px-3 py-1 rounded-full text-xs font-semibold">
+                    🇵🇭 Direct from local Philippine farmers & artisans
+                </span>
+                <h1 class="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold">
+                    Authentic Regional Pasalubong
+                </h1>
+                <p class="text-brand-sand/90 text-xs sm:text-sm max-w-xl mx-auto">
+                    Discover hand-crafted delicacies, coffee, and traditional crafts straight from micro-producers across Luzon, Visayas, and Mindanao.
+                </p>
+            </div>
+        </section>
+
+        <!-- Directory Section -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            
+            <!-- Category Filter Buttons -->
+            <div class="flex items-center justify-center space-x-2 overflow-x-auto pb-6">
+                <button onclick="setCategory('all')" id="cat-all" class="cat-btn bg-brand-terracotta text-white px-4 py-1.5 rounded-full text-xs font-bold transition">
+                    All Items
+                </button>
+                <button onclick="setCategory('Delicacies')" id="cat-Delicacies" class="cat-btn bg-white hover:bg-brand-sand text-gray-700 border border-brand-sand px-4 py-1.5 rounded-full text-xs font-bold transition">
+                    Delicacies
+                </button>
+                <button onclick="setCategory('Coffee')" id="cat-Coffee" class="cat-btn bg-white hover:bg-brand-sand text-gray-700 border border-brand-sand px-4 py-1.5 rounded-full text-xs font-bold transition">
+                    Coffee
+                </button>
+                <button onclick="setCategory('Crafts')" id="cat-Crafts" class="cat-btn bg-white hover:bg-brand-sand text-gray-700 border border-brand-sand px-4 py-1.5 rounded-full text-xs font-bold transition">
+                    Crafts
+                </button>
+            </div>
+
+            <!-- Interactive Products Grid -->
+            <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Products rendered via JS -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brand-wood text-brand-sand py-6 border-t border-brand-terracotta/30 text-center text-xs">
+        <p>© 2026 Pasalubong Direct. Connecting provincial artisans with buyers worldwide.</p>
+    </footer>
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl relative modal-fade border border-brand-sand">
+            
+            <!-- Close Button -->
+            <button onclick="closeModal()" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <!-- Modal Title -->
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 bg-brand-sand rounded-2xl flex items-center justify-center text-brand-terracotta text-xl mx-auto mb-2">
+                    <i class="fa-solid fa-user-lock"></i>
+                </div>
+                <h3 id="modalTitle" class="font-serif text-2xl font-bold text-brand-wood">Sign In</h3>
+                <p id="modalSubtitle" class="text-xs text-gray-500 mt-1">Access your Pasalubong Direct account</p>
+            </div>
+
+            <!-- Inline Account Creation Success Banner -->
+            <div id="accountCreatedSuccess" class="hidden mb-4 p-3 bg-green-50 border border-green-200 rounded-xl text-xs text-green-800 flex items-center space-x-2">
+                <i class="fa-solid fa-circle-check text-green-600 text-sm"></i>
+                <span>Account created successfully! You can now sign in below.</span>
+            </div>
+
+            <!-- Form -->
+            <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-4">
+                <div id="nameFieldGroup" class="hidden space-y-1">
+                    <label class="text-xs font-bold text-brand-wood block">Full Name</label>
+                    <input type="text" id="authName" placeholder="e.g. Maria Santos" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-brand-terracotta">
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-brand-wood block">Email Address</label>
+                    <input type="email" id="authEmail" required placeholder="name@example.com" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-brand-terracotta">
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-brand-wood block">Password</label>
+                    <input type="password" id="authPassword" required placeholder="••••••••" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-brand-terracotta">
+                </div>
+
+                <button type="submit" id="submitBtn" class="action-btn w-full bg-brand-terracotta hover:bg-brand-terracottaDark text-white py-3 rounded-xl font-bold text-xs shadow-md">
+                    Sign In
+                </button>
+            </form>
+
+            <!-- Hyperlink Mode Switcher -->
+            <div class="mt-5 text-center text-xs text-gray-500">
+                <span id="togglePrompt">Don't have an account?</span>
+                <a href="javascript:void(0)" onclick="toggleAuthMode()" id="toggleHyperlink" class="text-brand-terracotta font-bold underline ml-1 hover:text-brand-terracottaDark">
+                    Create Account
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 bg-brand-wood text-white px-4 py-3 rounded-2xl shadow-xl flex items-center space-x-2 text-xs border border-brand-gold transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <i class="fa-solid fa-circle-info text-brand-gold"></i>
+        <span id="toastText">Notification message</span>
+    </div>
+
+    <script>
+        // 1. Specialty Products Data
+        const PRODUCTS = [
+            {
+                id: 1,
+                name: 'Crispy Royal Vigan Bibingka (Box of 8)',
+                category: 'Delicacies',
+                province: 'Ilocos Sur',
+                price: 280,
+                rating: 4.9,
+                image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=600'
+            },
+            {
+                id: 2,
+                name: 'Honey Glazed Albay Pili Nuts (250g)',
+                category: 'Delicacies',
+                province: 'Albay',
+                price: 350,
+                rating: 4.8,
+                image: 'https://images.unsplash.com/photo-1543218024-57a70143c369?auto=format&fit=crop&q=80&w=600'
+            },
+            {
+                id: 3,
+                name: 'Single-Origin Bukidnon Arabica (250g)',
+                category: 'Coffee',
+                province: 'Bukidnon',
+                price: 420,
+                rating: 5.0,
+                image: 'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&q=80&w=600'
+            },
+            {
+                id: 4,
+                name: 'Handwoven Inabel Table Runner',
+                category: 'Crafts',
+                province: 'Ilocos Norte',
+                price: 850,
+                rating: 4.9,
+                image: 'https://images.unsplash.com/photo-1606744837616-56c9a5c6a6eb?auto=format&fit=crop&q=80&w=600'
+            },
+            {
+                id: 5,
+                name: 'Original Bohol Peanut Kisses',
+                category: 'Delicacies',
+                province: 'Bohol',
+                price: 195,
+                rating: 4.7,
+                image: 'https://images.unsplash.com/photo-1582293041079-7814c2f12063?auto=format&fit=crop&q=80&w=600'
+            },
+            {
+                id: 6,
+                name: 'Pure Sagada Dark Roast Coffee (500g)',
+                category: 'Coffee',
+                province: 'Mountain Province',
+                price: 520,
+                rating: 4.9,
+                image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&q=80&w=600'
+            }
+        ];
+
+        // State Variables
+        let activeCategory = 'all';
+        let authMode = 'login'; // 'login' or 'signup'
+        let currentUser = null;
+
+        // On Page Load
+        window.onload = function() {
+            renderProducts();
+        };
+
+        // Render Products with Interactive Hover Cards
+        function renderProducts() {
+            const grid = document.getElementById('productsGrid');
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+
+            const filtered = PRODUCTS.filter(prod => {
+                const matchesCategory = (activeCategory === 'all') || (prod.category === activeCategory);
+                const matchesSearch = prod.name.toLowerCase().includes(query) || prod.province.toLowerCase().includes(query);
+                return matchesCategory && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-gray-500 text-xs">No products found for this filter.</div>`;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(prod => `
+                <div class="product-card bg-white rounded-2xl overflow-hidden border border-brand-sand shadow-sm flex flex-col justify-between group cursor-pointer">
+                    <!-- Image with hover zoom -->
+                    <div class="relative h-48 overflow-hidden bg-gray-100">
+                        <img src="${prod.image}" alt="${prod.name}" class="product-card-img w-full h-full object-cover">
+                        <span class="absolute top-3 left-3 bg-brand-wood/80 backdrop-blur-md text-brand-sand text-[10px] font-bold px-2.5 py-1 rounded-md">
+                            <i class="fa-solid fa-location-dot text-brand-gold mr-1"></i>${prod.province}
+                        </span>
+                    </div>
+
+                    <!-- Details -->
+                    <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
+                        <div>
+                            <div class="text-[11px] text-brand-gold font-bold mb-1">
+                                <i class="fa-solid fa-star mr-1"></i>${prod.rating}
+                            </div>
+                            <h3 class="font-bold text-sm text-brand-wood group-hover:text-brand-terracotta transition">
+                                ${prod.name}
+                            </h3>
+                        </div>
+
+                        <div class="pt-2 border-t border-gray-100 flex items-center justify-between">
+                            <div>
+                                <span class="text-[10px] text-gray-400 block uppercase font-bold">Price</span>
+                                <span class="text-base font-bold text-brand-terracotta">₱${prod.price}</span>
+                            </div>
+                            <button onclick="showToast('Added ${prod.name} to inquiry list!')" class="action-btn bg-brand-terracotta hover:bg-brand-terracottaDark text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow-sm">
+                                Order Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Category Filter Handling
+        function setCategory(cat) {
+            activeCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.className = "cat-btn bg-white hover:bg-brand-sand text-gray-700 border border-brand-sand px-4 py-1.5 rounded-full text-xs font-bold transition";
+            });
+            const selected = document.getElementById(`cat-${cat}`);
+            if (selected) {
+                selected.className = "cat-btn bg-brand-terracotta text-white px-4 py-1.5 rounded-full text-xs font-bold transition";
+            }
+            renderProducts();
+        }
+
+        function filterProducts() {
+            renderProducts();
+        }
+
+        function resetSearch() {
+            document.getElementById('searchInput').value = '';
+            setCategory('all');
+        }
+
+        /* Authentication & Modal Logic */
+        function openAuthModal(mode) {
+            authMode = mode;
+            document.getElementById('accountCreatedSuccess').classList.add('hidden');
+            updateModalUI();
+            document.getElementById('authModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('authModal').classList.add('hidden');
+        }
+
+        function toggleAuthMode() {
+            authMode = (authMode === 'login') ? 'signup' : 'login';
+            document.getElementById('accountCreatedSuccess').classList.add('hidden');
+            updateModalUI();
+        }
+
+        function updateModalUI() {
+            const title = document.getElementById('modalTitle');
+            const subtitle = document.getElementById('modalSubtitle');
+            const nameGroup = document.getElementById('nameFieldGroup');
+            const submitBtn = document.getElementById('submitBtn');
+            const togglePrompt = document.getElementById('togglePrompt');
+            const toggleHyperlink = document.getElementById('toggleHyperlink');
+
+            if (authMode === 'login') {
+                title.innerText = "Sign In";
+                subtitle.innerText = "Access your Pasalubong Direct account";
+                nameGroup.classList.add('hidden');
+                submitBtn.innerText = "Sign In";
+                togglePrompt.innerText = "Don't have an account?";
+                toggleHyperlink.innerText = "Create Account";
+            } else {
+                title.innerText = "Create Account";
+                subtitle.innerText = "Join our platform supporting local Philippine artisans";
+                nameGroup.classList.remove('hidden');
+                submitBtn.innerText = "Register Account";
+                togglePrompt.innerText = "Already have an account?";
+                toggleHyperlink.innerText = "Sign In Instead";
+            }
+        }
+
+        function handleAuthSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('authEmail').value;
+            const name = document.getElementById('authName').value || email.split('@')[0];
+
+            if (authMode === 'signup') {
+                // Switch back to login mode & show success banner
+                authMode = 'login';
+                updateModalUI();
+                document.getElementById('accountCreatedSuccess').classList.remove('hidden');
+                showToast("Account created successfully!");
+                return;
+            }
+
+            // Handle successful sign in
+            currentUser = { name, email };
+            closeModal();
+            showToast(`Welcome back, ${name}!`);
+            renderUserNav();
+        }
+
+        function renderUserNav() {
+            const container = document.getElementById('authNavContainer');
+            if (currentUser) {
+                container.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs font-bold text-brand-wood">Hi, ${currentUser.name}</span>
+                        <button onclick="logout()" class="text-xs text-red-600 font-bold hover:underline px-2 py-1">Log Out</button>
+                    </div>
+                `;
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            showToast("You have been logged out.");
+            document.getElementById('authNavContainer').innerHTML = `
+                <button onclick="openAuthModal('login')" class="text-xs font-bold text-brand-wood hover:text-brand-terracotta px-3 py-2 transition">
+                    Sign In
+                </button>
+                <button onclick="openAuthModal('signup')" class="bg-brand-terracotta hover:bg-brand-terracottaDark text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm">
+                    Create Account
+                </button>
+            `;
+        }
+
+        // Helper Toast Notification
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastText').innerText = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+                toast.classList.remove('translate-y-0', 'opacity-100');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
